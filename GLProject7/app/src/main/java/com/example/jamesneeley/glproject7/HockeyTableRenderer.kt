@@ -1,11 +1,12 @@
-package com.example.jamesneeley.glproject6
+package com.example.jamesneeley.glproject7
 
 import android.content.Context
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix.*
-import com.example.jamesneeley.glproject6.util.ShaderHelper
-import com.example.jamesneeley.glproject6.util.TextResourceReader
+import com.example.jamesneeley.glproject7.util.Constants.BYTES_PER_FLOAT
+import com.example.jamesneeley.glproject7.util.ShaderHelper
+import com.example.jamesneeley.glproject7.util.TextResourceReader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -16,10 +17,6 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
 
 
     private val _context = context
-
-    private val BYTES_PER_FLOAT =
-        4    //when allocating native memory we need to know how big the memory block is and each float holds 4 bytes or 32 bits
-
     private val POSITION_COMPONENT_COUNT =
         2 //used to calculate the stride, position of color component offset, and the length of position components
     private val COLOR_COMPONENT_COUNT = 3 //used to calculate stride and length of color components
@@ -37,9 +34,7 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
     private var program: Int = 0 //location in gpu where program is that contains the fragment and vertexShader
 
 
-    private val projectionMatrix =
-        FloatArray(16) //the Matrix values that are used to transform openGL coordinate system to
-
+    private val projectionMatrix = FloatArray(16) //the Matrix values that are used to transform openGL coordinate system to
     private val modelMatrix = FloatArray(16)
 
     private val vertexData: FloatBuffer //used to store tableVertice in native memore for openGL to access
@@ -120,48 +115,20 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES30.glViewport(0, 0, width, height) //set the openGL View size
+        GLES30.glViewport(0, 0, width, height)
 
-        perspectiveM(projectionMatrix,0, 45f, width.toFloat() / height.toFloat(), 1f, 10f) //sets matrix values to align with
-        // a 45 degree view with a certain aspect and sets the near and far distances of the frustrum
+        perspectiveM(projectionMatrix, 0, 45f, width.toFloat()/ height.toFloat(), 1f, 10f)
 
-        setIdentityM(modelMatrix, 0) //sets modelMatrix to use the identity transformation so that we can translate correctly in the next line
-        translateM(modelMatrix, 0, 0f, 0f, -10.0000f) //sets the matrix values to translate the model into the screen by 2.5 so we can see it
-        rotateM(modelMatrix, 0, 0f, 1f, 0f, 0f) //multiplies the model matrix previous values to rotate along the X axis negative 60 degrees
 
-        val temp = FloatArray(16) //we need to create a temporary matrix for multiplication
+        setIdentityM(modelMatrix, 0)
+        translateM(modelMatrix,0, 0f, 0f, -2.5f)
+        rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f)
 
-        multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0) //multiply project and model matrix together into the temp matrix
-        System.arraycopy(temp, 0, projectionMatrix, 0, temp.count()) //then copy over and replace values for the temp Matrix into the projection Matrix
 
-//
-//        val widthF = width.toFloat()
-//        val heightF = height.toFloat()
-//
-//        val aspectRatio =
-//            if (widthF > heightF) { //get view aspect ratio. this value will be the same regardless of orientation
-//                widthF / heightF
-//            } else {
-//                heightF / widthF
-//            }
-//
-//
-//        if (widthF > height) {
-//            // Landscape
-//            orthoM(
-//                projectionMatrix,
-//                0,
-//                -aspectRatio,
-//                aspectRatio,
-//                -1f,
-//                1f,
-//                -1f,
-//                1f
-//            ) //create matrix that will later be used to tell openGL to change coordinate system to adjust for aspect ratio
-//        } else {
-//            // Portrait or square
-//            orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f)
-//        }
+        val temp = FloatArray(16)
+        multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0)
+        System.arraycopy(temp, 0, projectionMatrix, 0, temp.count())
+
     }
 
 
