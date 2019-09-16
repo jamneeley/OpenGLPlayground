@@ -1,4 +1,4 @@
-package com.example.jamesneeley.glproject7.util
+package com.example.jamesneeley.glproject8.util
 
 import android.opengl.GLES30
 import android.util.Log

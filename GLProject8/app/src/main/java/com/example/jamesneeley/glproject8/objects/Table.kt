@@ -1,10 +1,9 @@
-package com.example.jamesneeley.glproject7.objects
+package com.example.jamesneeley.glproject8.objects
 
 import android.opengl.GLES30
-import android.provider.SyncStateContract
-import com.example.jamesneeley.glproject7.data.VertexArray
-import com.example.jamesneeley.glproject7.programs.TextureShaderProgram
-import com.example.jamesneeley.glproject7.util.Constants
+import com.example.jamesneeley.glproject8.data.VertexArray
+import com.example.jamesneeley.glproject8.programs.TextureShaderProgram
+import com.example.jamesneeley.glproject8.util.Constants
 
 class Table {
 

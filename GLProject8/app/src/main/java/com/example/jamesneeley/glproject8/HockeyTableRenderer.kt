@@ -1,16 +1,18 @@
-package com.example.jamesneeley.glproject7
+package com.example.jamesneeley.glproject8
 
 import android.content.Context
+import android.graphics.Point
+import android.graphics.PointF
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import com.example.jamesneeley.glproject7.programs.ColorShaderProgram
-import com.example.jamesneeley.glproject7.programs.TextureShaderProgram
-import com.example.jamesneeley.glproject7.objects.Mallet
-import com.example.jamesneeley.glproject7.objects.Table
-import com.example.jamesneeley.glproject7.util.TextureHelper
+import com.example.jamesneeley.glproject8.programs.ColorShaderProgram
+import com.example.jamesneeley.glproject8.programs.TextureShaderProgram
+import com.example.jamesneeley.glproject8.objects.Mallet
+import com.example.jamesneeley.glproject8.objects.Table
+import com.example.jamesneeley.glproject8.util.TextureHelper
 
 class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
 
@@ -23,6 +25,10 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
     private lateinit var colorProgram: ColorShaderProgram
     private var texture: Int = 0
 
+
+    private var malletPressed = false
+    private var blueMalletPosition = PointF(0f, 0f)
+
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
         table = Table()
@@ -30,6 +36,7 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
         textureProgram = TextureShaderProgram(_context)
         colorProgram = ColorShaderProgram(_context)
         texture = TextureHelper.loadTexture(_context, R.drawable.air_hockey_surface)
+        blueMalletPosition = PointF(60 / 2 / 2f, 0.4f)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -62,5 +69,19 @@ class HockeyTableRenderer(context: Context) : GLSurfaceView.Renderer {
         colorProgram.setUniforms(projectionMatrix)
         mallet.bindData(colorProgram)
         mallet.draw()
+    }
+
+
+    fun handleTouchPress(x: Float, y: Float) {
+        val ray = convertNormalized2DPointToRay(x, y)
+
+        val malletBoundingSphere = Sphere(blueMalletPosition.x, blueMalletPosition.y, blueMalletPosition.z, mallet.height/2f)
+        malletPressed = Geometry.intersects(malletBoundingSphere, ray)
+
+
+    }
+
+    fun handleTouchDrag(x: Float, y: Float) {
+
     }
 }
